@@ -121,5 +121,5 @@ enum
 
 // Notifications
 
-#define APPERSISTENTSTOREDIDCHANGENOTIFICATION	@"APPersistentStoreDidChangeNotification"
-#define APUBIQUITOUSSTORAGEAVAILABILITYDIDCHANGENOTIFICATION @"APUbiquitousStorageAvailablityDidChangeNotification"
+#define APPersistentStoreDidChangeNotification	@"APPersistentStoreDidChangeNotification"
+#define APUbiquitousStorageAvailablityDidChangeNotification @"APUbiquitousStorageAvailablityDidChangeNotification"

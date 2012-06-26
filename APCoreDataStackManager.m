@@ -8,8 +8,8 @@
 
 #import "APCoreDataStackManager.h"
 
-#define UBIQUITYCONFIGURATIONFILENAME @"Configuration.plist"
-#define UBIQUITYCONFIGURATIONCONTENTNAMEKEY @"storeUbiquitousContentName"
+#define UbiquityConfigurationFilename @"Configuration.plist"
+#define UbiquityConfigurationContentNameKey @"storeUbiquitousContentName"
 
 @interface APCoreDataStackManager () <NSFilePresenter> {
 @private
@@ -170,7 +170,7 @@
         
         // Notify that we have determined if the ubiquitous storage was available
         dispatch_async(dispatch_get_main_queue(), ^{
-            [[NSNotificationCenter defaultCenter] postNotificationName:APUBIQUITOUSSTORAGEAVAILABILITYDIDCHANGENOTIFICATION
+            [[NSNotificationCenter defaultCenter] postNotificationName:APUbiquitousStorageAvailablityDidChangeNotification
                                                                 object:self
                                                               userInfo:@{@"ubiquitousStorageAvailable": @(available)}]; 
         });
@@ -225,7 +225,7 @@
     NSFileCoordinator   * fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:self];
     
     __block NSString    * contentName = nil;
-    NSURL               * ubiquityConfigurationURL = [containerURL URLByAppendingPathComponent:UBIQUITYCONFIGURATIONFILENAME];
+    NSURL               * ubiquityConfigurationURL = [containerURL URLByAppendingPathComponent: UbiquityConfigurationFilename];
     NSError             * outError = nil;
     [fileCoordinator coordinateReadingItemAtURL:ubiquityConfigurationURL
                                         options:0
@@ -237,7 +237,7 @@
                                                                                                                    options:NSPropertyListImmutable
                                                                                                                     format:NULL
                                                                                                                      error:nil];
-                                             contentName = [dictionary valueForKey:UBIQUITYCONFIGURATIONCONTENTNAMEKEY];
+                                             contentName = [dictionary valueForKey: UbiquityConfigurationContentNameKey];
                                          }
                                          
                                          ap_filePresenterURL = newURL;
@@ -266,10 +266,10 @@
     // Perform a coordinated write on the configuration file
     NSFileCoordinator * fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:self];    
     
-    NSURL           * ubiquityConfigurationURL = [ap_ubiquityContainerURL URLByAppendingPathComponent:UBIQUITYCONFIGURATIONFILENAME];
+    NSURL           * ubiquityConfigurationURL = [ap_ubiquityContainerURL URLByAppendingPathComponent: UbiquityConfigurationFilename];
     
     // Write it to the configuration file
-    NSDictionary * dictionary = @{UBIQUITYCONFIGURATIONCONTENTNAMEKEY: contentName};
+    NSDictionary * dictionary = @{UbiquityConfigurationContentNameKey: contentName};
     NSData * ubiquityConfigurationData = [NSPropertyListSerialization dataWithPropertyList:dictionary
                                                                                     format:NSPropertyListXMLFormat_v1_0
                                                                                    options:0
@@ -344,7 +344,7 @@
         ap_currentStoreUbiquitousContentName = storeUbiquitousContentName;
         [self setCurrentPersistentStoreURL:storeURL];
         
-        [[NSNotificationCenter defaultCenter] postNotificationName:APPERSISTENTSTOREDIDCHANGENOTIFICATION
+        [[NSNotificationCenter defaultCenter] postNotificationName: APPersistentStoreDidChangeNotification
                                                             object:nil
                                                           userInfo:@{@"PersistentStoreIsUbiquitous": @YES}];
         
@@ -383,7 +383,7 @@
     [self setCurrentPersistentStoreURL:localStoreURL];
     
     dispatch_async(dispatch_get_main_queue(), ^{
-        [[NSNotificationCenter defaultCenter] postNotificationName:APPERSISTENTSTOREDIDCHANGENOTIFICATION
+        [[NSNotificationCenter defaultCenter] postNotificationName:APPersistentStoreDidChangeNotification
                                                             object:nil
                                                           userInfo:@{@"PersistentStoreIsUbiquitous": @NO}];
         
