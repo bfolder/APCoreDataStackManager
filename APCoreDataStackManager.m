@@ -112,7 +112,6 @@
     if([[NSFileCoordinator filePresenters] containsObject:self]) {
         [NSFileCoordinator removeFilePresenter:self];
     }
-    dispatch_release(ap_persistentStoreQueue);
 }
 
 - (void)ap_checkUbiquitousDocumentStorageAvailabilityWithTimeOutDelay:(NSTimeInterval)delay completionHandler:(void (^)(BOOL, BOOL, NSURL *, NSURL *, NSString *))completionHandler {
@@ -825,6 +824,33 @@
     }
     
     return [NSData dataWithContentsOfURL:[self currentStoreURL]];
+}
+
+#pragma mark - Remaining persistent stores
+
+- (NSArray *)previouslyUsedPersistentStoresURLs {
+    NSURL * ubiquityContainerURL = ap_ubiquityContainerURL;
+    if(!ubiquityContainerURL) {
+        // URLs will not be fetched asynchronously
+        // This method should be called once the stack is set up
+        return nil;
+    }
+    NSURL           * persistentStoresContainer = [ap_ubiquityContainerURL URLByAppendingPathComponent:@"Documents"
+                                                                                           isDirectory:YES];
+    persistentStoresContainer = [persistentStoresContainer URLByAppendingPathComponent:@"LocalData.nosync"
+                                                                           isDirectory:YES];
+    NSFileManager * fileManager = [NSFileManager defaultManager];
+    NSDirectoryEnumerator * enumerator = [fileManager enumeratorAtURL:persistentStoresContainer
+                                           includingPropertiesForKeys:@[NSURLNameKey, NSURLContentModificationDateKey]
+                                                              options:(NSDirectoryEnumerationSkipsHiddenFiles|NSDirectoryEnumerationSkipsSubdirectoryDescendants)
+                                                         errorHandler:nil];
+    NSMutableArray * urls = [NSMutableArray array];
+    for (NSURL * url in enumerator) {
+        if(![url isEqual:[self ubiquitousPersistentStoreURL]]) {
+            [urls addObject:url];
+        }
+    }
+    return [NSArray arrayWithArray:urls];
 }
 
 #pragma mark

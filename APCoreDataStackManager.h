@@ -72,6 +72,9 @@
 // Persistent store data
 - (NSData *)persistentStoreData;
 
+// URLs of previously persistent stores in the local ubiquitous container
+- (NSArray *)previouslyUsedPersistentStoresURLs;
+
 @end
 
 @protocol APCoreDataStackManagerDelegate <NSObject>
