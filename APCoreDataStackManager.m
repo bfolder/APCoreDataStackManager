@@ -152,8 +152,11 @@
 - (void)checkUbiquitousStorageAvailability {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
         
-        BOOL shouldUseIcloud = [[[MNSettings sharedSettings] storedValueForKey: MNSettingsiCloudKey] boolValue];
+        BOOL shouldUseIcloud = YES;
         
+#if TARGET_OS_IPHONE
+        shouldUseIcloud = [[[MNSettings sharedSettings] storedValueForKey: MNSettingsiCloudKey] boolValue];
+#endif
         
         NSFileManager   * fileManager = [NSFileManager defaultManager];
         __block NSURL * ubiquityContainerURL = nil;
