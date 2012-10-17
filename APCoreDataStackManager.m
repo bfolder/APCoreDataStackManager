@@ -151,6 +151,10 @@
 
 - (void)checkUbiquitousStorageAvailability {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+        
+        BOOL shouldUseIcloud = [[[MNSettings sharedSettings] storedValueForKey: MNSettingsiCloudKey] boolValue];
+        
+        
         NSFileManager   * fileManager = [NSFileManager defaultManager];
         __block NSURL * ubiquityContainerURL = nil;
         dispatch_sync(ap_ubiquitousStorageCheckQueue, ^{
@@ -171,7 +175,7 @@
         dispatch_async(dispatch_get_main_queue(), ^{
             [[NSNotificationCenter defaultCenter] postNotificationName:APUbiquitousStorageAvailablityDidChangeNotification
                                                                 object:self
-                                                              userInfo:@{@"ubiquitousStorageAvailable": @(available)}]; 
+                                                              userInfo:@{@"ubiquitousStorageAvailable": @(available), @"showAlertToNotify": @(shouldUseIcloud && !available)}];
         });
     });
 }
