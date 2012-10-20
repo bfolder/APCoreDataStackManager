@@ -146,6 +146,8 @@
         if(completionHandler) {
             completionHandler(timeOut, ubiquitousDocumentStorageAvailable, ubiquityContainerURL, ap_ubiquitousPersistentStoreURL, ubiquitousContentName);
         }
+        
+        dispatch_release(group);
     });
 }
 
